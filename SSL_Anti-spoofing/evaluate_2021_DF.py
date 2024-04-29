@@ -26,7 +26,7 @@ submit_file = sys.argv[1]
 truth_dir = sys.argv[2]
 phase = sys.argv[3]
 
-cm_key_file = os.path.join(truth_dir, 'CM/trial_metadata.txt')
+cm_key_file = os.path.join(truth_dir, 'CM/inference_metadata.txt')
 
 
 def eval_to_score_file(score_file, cm_key_file):
