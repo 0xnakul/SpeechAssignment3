@@ -12,6 +12,7 @@ from model import Model
 from tensorboardX import SummaryWriter
 from core_scripts.startup_config import set_random_seed
 from tqdm.auto import tqdm
+from pytorch_lightning.loggers import WandbLogger
 
 
 __author__ = "Hemlata Tak"
@@ -253,14 +254,14 @@ if __name__ == '__main__':
 
     #evaluation 
     if args.eval:
-        file_eval = genSpoof_list( dir_meta =  os.path.join(args.protocols_path+'ASVspoof_{}_cm_protocols/inference.txt'.format(track)),is_train=False,is_eval=True)
+        file_eval = genSpoof_list( dir_meta =  os.path.join(args.protocols_path+'ASVspoof_{}_cm_protocols/temp.txt'.format(track)),is_train=False,is_eval=True)
         print('no. of eval trials',len(file_eval))
         eval_set=Dataset_ASVspoof2021_eval(list_IDs = file_eval,base_dir = args.database_path)
         produce_evaluation_file(eval_set, model, device, args.eval_output)
         sys.exit(0)
    
     
-
+    logger = WandbLogger(name=f'=lr={args.lr}_bs={args.batch_size}', project="SpeechAssignment3")
      
     # define train dataloader
     d_label_trn,file_train = genSpoof_list( dir_meta =  os.path.join(args.protocols_path+'ASVspoof_DF_cm_protocols/train.txt'),is_train=True,is_eval=False)

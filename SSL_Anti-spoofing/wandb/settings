@@ -1,0 +1,5 @@
+[default]
+entity = thisis_nkul
+project = SpeechAssignment3
+base_url = https://api.wandb.ai
+
