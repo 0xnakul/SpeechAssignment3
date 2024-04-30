@@ -73,7 +73,7 @@ class Dataset_ASVspoof2019_train(Dataset):
 	def __getitem__(self, index):
             
             utt_id = self.list_IDs[index]
-            X,fs = librosa.load(self.base_dir+'flac/'+utt_id+'.flac', sr=16000) 
+            X,fs = librosa.load(self.base_dir+utt_id, sr=16000) 
             Y=process_Rawboost_feature(X,fs,self.args,self.algo)
             X_pad= pad(Y,self.cut)
             x_inp= Tensor(X_pad)

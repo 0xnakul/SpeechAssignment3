@@ -11,6 +11,7 @@ from data_utils_SSL import genSpoof_list,Dataset_ASVspoof2019_train,Dataset_ASVs
 from model import Model
 from tensorboardX import SummaryWriter
 from core_scripts.startup_config import set_random_seed
+from tqdm.auto import tqdm
 
 
 __author__ = "Hemlata Tak"
@@ -24,7 +25,7 @@ def evaluate_accuracy(dev_loader, model, device):
     model.eval()
     weight = torch.FloatTensor([0.1, 0.9]).to(device)
     criterion = nn.CrossEntropyLoss(weight=weight)
-    for batch_x, batch_y in dev_loader:
+    for batch_x, batch_y in tqdm(dev_loader):
         
         batch_size = batch_x.size(0)
         num_total += batch_size
@@ -81,7 +82,7 @@ def train_epoch(train_loader, model, lr,optim, device):
     weight = torch.FloatTensor([0.1, 0.9]).to(device)
     criterion = nn.CrossEntropyLoss(weight=weight)
     
-    for batch_x, batch_y in train_loader:
+    for batch_x, batch_y in tqdm(train_loader):
        
         batch_size = batch_x.size(0)
         num_total += batch_size
@@ -113,6 +114,8 @@ if __name__ == '__main__':
     %      |- ASVspoof2019_LA_train/flac
     %      |- ASVspoof2019_LA_dev/flac
     '''
+    parser.add_argument('--database_train_path', type=str, default='../../combined_train/') 
+    parser.add_argument('--database_validation_path', type=str, default='../../combined_validation/')
 
     parser.add_argument('--protocols_path', type=str, default='database/', help='Change with path to user\'s DF database protocols directory address')
     '''
@@ -260,11 +263,10 @@ if __name__ == '__main__':
 
      
     # define train dataloader
-    d_label_trn,file_train = genSpoof_list( dir_meta =  os.path.join(args.protocols_path+'ASVspoof_LA_cm_protocols/ASVspoof2019.LA.cm.train.trn.txt'),is_train=True,is_eval=False)
-    
+    d_label_trn,file_train = genSpoof_list( dir_meta =  os.path.join(args.protocols_path+'ASVspoof_DF_cm_protocols/train.txt'),is_train=True,is_eval=False)
     print('no. of training trials',len(file_train))
     
-    train_set=Dataset_ASVspoof2019_train(args,list_IDs = file_train,labels = d_label_trn,base_dir = os.path.join(args.database_path+'ASVspoof2019_LA_train/'),algo=args.algo)
+    train_set=Dataset_ASVspoof2019_train(args,list_IDs = file_train,labels = d_label_trn,base_dir = args.database_train_path,algo=args.algo)
     
     train_loader = DataLoader(train_set, batch_size=args.batch_size,num_workers=8, shuffle=True,drop_last = True)
     
@@ -273,11 +275,11 @@ if __name__ == '__main__':
 
     # define dev (validation) dataloader
 
-    d_label_dev,file_dev = genSpoof_list( dir_meta =  os.path.join(args.protocols_path+'ASVspoof_LA_cm_protocols/ASVspoof2019.LA.cm.dev.trl.txt'),is_train=False,is_eval=False)
+    d_label_dev,file_dev = genSpoof_list( dir_meta =  os.path.join(args.protocols_path+'ASVspoof_DF_cm_protocols/validation.txt'),is_train=False,is_eval=False)
     
     print('no. of validation trials',len(file_dev))
     
-    dev_set = Dataset_ASVspoof2019_train(args,list_IDs = file_dev,labels = d_label_dev,base_dir = os.path.join(args.database_path+'ASVspoof2019_LA_dev/'),algo=args.algo)
+    dev_set = Dataset_ASVspoof2019_train(args,list_IDs = file_dev,labels = d_label_dev,base_dir = args.database_validation_path,algo=args.algo)
 
     dev_loader = DataLoader(dev_set, batch_size=args.batch_size,num_workers=8, shuffle=False)
 
