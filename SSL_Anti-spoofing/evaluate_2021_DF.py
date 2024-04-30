@@ -45,8 +45,8 @@ def eval_to_score_file(score_file, cm_key_file):
     bona_cm = cm_scores[cm_scores[5] == 'bonafide']['1_x'].values
     spoof_cm = cm_scores[cm_scores[5] == 'spoof']['1_x'].values
     eer_cm = em.compute_eer(bona_cm, spoof_cm)[0]
-    out_data = "eer: %.2f\n" % (100*eer_cm)
-    print(out_data)
+    auc_cm = em.compute_auc(bona_cm, spoof_cm)
+    print(f'EER: {eer_cm:.4f}, AUC: {auc_cm:.4f}')
     return eer_cm
 
 if __name__ == "__main__":
